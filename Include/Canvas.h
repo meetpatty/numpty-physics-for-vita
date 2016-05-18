@@ -22,6 +22,7 @@
 #define __CANVAS_H__
 
 #include <string>
+#include <vita2d.h>
 
 #include "Config.h"
 #include "Common.h"
@@ -58,6 +59,7 @@ public:
 	void drawPause(int x, int y);
 	void drawNext(int x, int y);
 	void drawImage(void *img, int x, int y, int w, int h);
+	void LoadAssets();
 	
 protected:
 	typedef void* State;
@@ -67,7 +69,7 @@ protected:
 	Canvas* m_bgImage; 
 	Rect    m_clip;
 	bool b_fade;
-
+	
 };
 
 #endif

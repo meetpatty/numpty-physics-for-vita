@@ -49,27 +49,26 @@ void NextLevelOverlay::draw(Canvas* screen)
 	genIcon();
 	if(b)
 	{
-		screen->drawImage(m_icon,m_x+50,m_y+38, 220, 110);
+		screen->drawImage(m_icon,m_x+50*2,m_y+38*2, 220, 110);
 	}
 }
 
 bool NextLevelOverlay::onClick(int x, int y)
 {
-	//DEBUG2(x,y,-99,88);
 	//if (y > 180)
-	if((x>=200)&&(y>=159)&&(x<=308)&&(y<=183))
+	if((x>=2 * 200)&&(y>= 2 * 159)&&(x<= 2 * 308)&&(y<= 2 * 183))
 	{
 		m_game.gotoLevel(m_selectedLevel);
 	}
 	else
-	if((x>=282)&&(y>=81)&&(x<=310)&&(y<=107))//if (x > 300)
+	if((x>= 2*282)&&(y>= 2 * 81)&&(x<= 2 * 310)&&(y<= 2 * 107))//if (x > 300)
 	{
 		m_selectedLevel++;
 		if (m_selectedLevel>m_game.m_levels.numLevels()) m_selectedLevel = m_game.m_levels.numLevels();
 		//printf("NextLevel++ = %d\n",m_selectedLevel);
 	}
 	else
-	if((x>=8)&&(y>=81)&&(x<=34)&&(y<=107)&&(m_selectedLevel>0))//if (x < 100 && m_selectedLevel > 0)
+	if((x>= 2 * 8)&&(y>= 2 * 81)&&(x<= 2 * 34)&&(y<= 2 * 107)&&(m_selectedLevel>0))//if (x < 100 && m_selectedLevel > 0)
 	{
 		m_selectedLevel--; 
 		//printf("NextLevel-- = %d\n",m_selectedLevel);
@@ -93,9 +92,9 @@ bool NextLevelOverlay::genIcon()
 				printf("generating thumbnail %s\n",m_game.m_levels.levelFile(m_selectedLevel).c_str());
 				CanvasSoft* temp = new CanvasSoft(CANVAS_WIDTH, CANVAS_HEIGHT);
 				scene.draw(temp, FULLSCREEN_RECT);
-				m_icon = (char*)malloc(512*272*2);
+				m_icon = (char*)malloc(960*544*2);
 				b = true;
-				memcpy(m_icon,temp->scale(m_selectedLevel),512*272*2);
+				memcpy(m_icon,temp->scale(m_selectedLevel),960*544*2);
 				delete temp;
 				printf("generating thumbnail %s done\n",m_game.m_levels.levelFile(m_selectedLevel).c_str());
 			}

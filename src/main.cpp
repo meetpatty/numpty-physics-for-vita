@@ -18,45 +18,46 @@
 * http://rock88dev.blogspot.com
 */
 
-#include <pspkernel.h>
-#include <pspdisplay.h>
-#include <pspdebug.h>
+#include <psp2/display.h>
+#include <PSP2/ctrl.h>
+#include <psp2/kernel/processmgr.h>
+#include <vita2d.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
 #include <time.h>
 
-#include <pspgu.h>
-#include <pspgum.h>
-#include "../common/callbacks.h"
-#include "../common/vram.h"
-
 #include "Overlay.h"
 #include "Game.h"
 
-PSP_MODULE_INFO("Numpty Physics", 0, 1, 1);
-PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER);
-
 int _isatty = 0;
 
-#define BUF_WIDTH (512)
-#define SCR_WIDTH (480)
-#define SCR_HEIGHT (272)
+#define BUF_WIDTH (960)
+#define SCR_WIDTH (960)
+#define SCR_HEIGHT (655)
 
 static unsigned int __attribute__((aligned(16))) list[262144];
 
+int ret;
+
 int main(int argc, char* argv[])
 {
-	setupCallbacks();
 
 #if 0	
 	FILE *f = fopen("log.txt","w");
 	fwrite("LOG\n",1,4,f);
 	fclose(f);
 #endif	
+	vita2d_init();
 
-	void* fbp0 = getStaticVramBuffer(BUF_WIDTH,SCR_HEIGHT,GU_PSM_8888);
+	vita2d_start_drawing();
+	vita2d_clear_screen();
+
+	vita2d_end_drawing();
+	vita2d_swap_buffers();
+
+	/*void* fbp0 = getStaticVramBuffer(BUF_WIDTH,SCR_HEIGHT,GU_PSM_8888);
 	void* fbp1 = getStaticVramBuffer(BUF_WIDTH,SCR_HEIGHT,GU_PSM_8888);
 	void* zbp = getStaticVramBuffer(BUF_WIDTH,SCR_HEIGHT,GU_PSM_4444);
 
@@ -78,31 +79,35 @@ int main(int argc, char* argv[])
 	sceGuSync(0,0);
 
 	sceDisplayWaitVblankStart();
-	sceGuDisplay(GU_TRUE);
+	sceGuDisplay(GU_TRUE);*/
 	
-	sceCtrlSetSamplingCycle(0);
-	sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
+	sceCtrlSetSamplingMode(SCE_CTRL_MODE_ANALOG);
 	
 	Game* game = new Game(0);
 
-	while (running())
+	while (true)//(running())
 	{
-		sceGuStart(GU_DIRECT,list);
+		/*sceGuStart(GU_DIRECT,list);
 
 		sceGuClearColor(0);
-		sceGuClear(GU_COLOR_BUFFER_BIT|GU_DEPTH_BUFFER_BIT);
+		sceGuClear(GU_COLOR_BUFFER_BIT|GU_DEPTH_BUFFER_BIT);*/
+
+		vita2d_start_drawing();
+		vita2d_clear_screen();
 		
+
 		game->run();
+
+		vita2d_end_drawing();
+		vita2d_swap_buffers();
 		
-		sceGuFinish();
+		/*sceGuFinish();
 		sceGuSync(0,0);
 
 		sceDisplayWaitVblankStart();
-		sceGuSwapBuffers();
+		sceGuSwapBuffers();*/
 	}
-
-	sceGuTerm();
-
-	sceKernelExitGame();
+	
+	sceKernelExitProcess(0);
 	return 0;
 }

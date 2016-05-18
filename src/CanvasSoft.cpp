@@ -18,9 +18,9 @@
 * http://rock88dev.blogspot.com
 */
 
-#define SCREEN_PITCH 	(512*2)
-#define SCREEN_W		(512)
-#define SCREEN_H		(272)
+#define SCREEN_PITCH 	(960*2)
+#define SCREEN_W		(960)
+#define SCREEN_H		(544)
 
 #include "CanvasSoft.h"
 
@@ -199,7 +199,21 @@ void renderLine(void *buf,int byteStride,int x1, int y1, int x2, int y2,PIX colo
 
 CanvasSoft::CanvasSoft(int w, int h):m_state(NULL),m_bgColour(0),m_bgImage(NULL)
 {
-	m_state = (char*)malloc(512*272*2);
+	m_state = (char*)malloc(960*544*2);
+	m_paper_img = (short*)malloc(960 * 544 * 2);
+
+	for (int i = 0; i < 272; i++)
+	{
+		for (int j = 0; j < 480; j++)
+		{
+			short color = PaperPic[j*2 + 512 * i*2] | PaperPic[j*2 + 1 + 512 * i*2] << 8;
+			m_paper_img[j*2 + 960 * i*2] = color;
+			m_paper_img[j*2+1 + 960 * i*2] = color;
+			m_paper_img[j*2 + 960 * (i*2+1)] = color;
+			m_paper_img[j*2+1 + 960 * (i*2+1)] = color;
+		}
+	}
+
 	setClip(0, 0, width(), height());
 }
 
@@ -263,7 +277,7 @@ void CanvasSoft::setBackground(CanvasSoft* bg)
 
 void CanvasSoft::clear()
 {
-	memcpy(m_state,PaperPic,SCREEN_W*SCREEN_H*2);
+	memcpy(m_state, m_paper_img,SCREEN_W*SCREEN_H*2);
 }
 
 void CanvasSoft::fade() 
@@ -380,7 +394,7 @@ void CanvasSoft::drawPath(const Path& path, int color, bool thick)
 		{
 			const Vec2& p1 = path.point(i-1);
 			renderLine<Uint16,3>(SURFACE(this),SCREEN_PITCH,p1.x, p1.y, p2.x, p2.y, color);
-			//DEBUG2(p1.x, p1.y, p2.x, p2.y);
+			////DEBUG2(p1.x, p1.y, p2.x, p2.y);
 		}
 		else
 		{

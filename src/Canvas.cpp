@@ -20,12 +20,16 @@
 
 #include "Canvas.h"
 #include "Pics.h"
+#include <vita2d.h>
 
-#define SCREEN_PITCH 	(512*2)
-#define SCREEN_W		(512)
-#define SCREEN_H		(272)
+#define SCREEN_PITCH 	(960*2)
+#define SCREEN_W		(960)
+#define SCREEN_H		(544)
 
 //int i_fade = 0;
+
+vita2d_texture *paper_pic, *paper_pic_dark, *pause_pic, *next_pic, *img_pic, *edit_pic;
+unsigned short *paper_pic_data, *paper_pic_dark_data, *pause_pic_data, *next_pic_data, *img_pic_data, *edit_pic_data;
 
 struct Vertex
 {
@@ -70,6 +74,8 @@ Canvas::Canvas(State state):m_state(state),m_bgColour(0),m_bgImage(NULL)
 {
 	b_fade = false;
 	resetClip();
+
+
 }
 
 Canvas::~Canvas()
@@ -119,28 +125,63 @@ void Canvas::setBackground(Canvas* bg)
 	m_bgImage = bg;
 }
 
+void Canvas::LoadAssets()
+{
+
+	paper_pic = vita2d_create_empty_texture_format(512, 512, SCE_GXM_TEXTURE_FORMAT_U5U6U5_BGR);
+	paper_pic_data = (unsigned short*)vita2d_texture_get_datap(paper_pic);
+
+	for (int i = 0; i < 512; i++)
+	{
+		for (int j = 0; j < 512; j++)
+			paper_pic_data[j + 512 * i] = PaperPic[j * 2 + 512 * i * 2] | PaperPic[j * 2 + 1 + 512 * i * 2] << 8;
+	}
+
+	paper_pic_dark = vita2d_create_empty_texture_format(512, 512, SCE_GXM_TEXTURE_FORMAT_U5U6U5_BGR);
+	paper_pic_dark_data = (unsigned short*)vita2d_texture_get_datap(paper_pic_dark);
+
+	for (int i = 0; i < 512; i++)
+	{
+		for (int j = 0; j < 512; j++)
+			paper_pic_dark_data[j + 512 * i] = PaperDarkPic[j * 2 + 512 * i * 2] | PaperDarkPic[j * 2 + 1 + 512 * i * 2] << 8;
+	}
+
+	next_pic = vita2d_create_empty_texture_format(320, 192, SCE_GXM_TEXTURE_FORMAT_U5U6U5_BGR);
+	next_pic_data = (unsigned short*)vita2d_texture_get_datap(next_pic);
+
+	for (int i = 0; i < 192; i++)
+	{
+		for (int j = 0; j < 320; j++)
+			next_pic_data[j + 320 * i] = NextPic[j * 2 + 512 * i * 2] | NextPic[j * 2 + 1 + 512 * i * 2] << 8;
+	}
+
+	img_pic = vita2d_create_empty_texture_format(960, 544, SCE_GXM_TEXTURE_FORMAT_U5U6U5_BGR);
+	img_pic_data = (unsigned short*)vita2d_texture_get_datap(img_pic);
+
+	edit_pic = vita2d_create_empty_texture_format(128, 256, SCE_GXM_TEXTURE_FORMAT_U5U6U5_BGR);
+	edit_pic_data = (unsigned short*)vita2d_texture_get_datap(edit_pic);
+
+	for (int i = 0; i < 256; i++)
+	{
+		for (int j = 0; j < 128; j++)
+			edit_pic_data[j + 128 * i] = EditPic[j * 2 + 128 * i * 2] | EditPic[j * 2 + 1 + 128 * i * 2] << 8;
+	}
+
+	pause_pic = vita2d_create_empty_texture_format(32, 32, SCE_GXM_TEXTURE_FORMAT_U5U6U5_BGR);
+	pause_pic_data = (unsigned short*)vita2d_texture_get_datap(pause_pic);
+
+	for (int i = 0; i < 32; i++)
+	{
+		for (int j = 0; j < 32; j++)
+			pause_pic_data[j + 32 * i] = PausePic[j * 2 + 32 * i * 2] | PausePic[j * 2 + 1 + 32 * i * 2] << 8;
+	}
+
+}
+
 void Canvas::clear()
 {
-	sceGuTexMode(GU_COLOR_5650,0,0,0);
-	if(b_fade) sceGuTexImage(0,512,512,512,PaperDarkPic);
-		else sceGuTexImage(0,512,512,512,PaperPic);
-	//sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
-	sceGuTexFunc(GU_TFX_ADD,GU_TCC_RGB);
-	sceGuTexFilter(GU_LINEAR,GU_LINEAR);
-	sceGuTexScale(1.0f,1.0f);
-	sceGuTexOffset(0.0f,0.0f);
-	sceGuAmbientColor(0xffffffff);
-		
-	sceGuColor(0xffffffff);
-	struct VertexUV* vertices = (struct VertexUV*)sceGuGetMemory(2 * sizeof(struct VertexUV));
-	vertices[0].u = 0; vertices[0].v = 0;
-	vertices[0].x = 0; vertices[0].y = 0; vertices[0].z = 0;
-	vertices[1].u = 512; vertices[1].v = 272;
-	vertices[1].x = 512; vertices[1].y = 274; vertices[1].z = 0;
-	sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_COLOR_5650|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertices);
-
-	//sceGuTexFilter(0,0);
-	sceGuTexFunc(0,0);
+	if (b_fade) vita2d_draw_texture_scale(paper_pic_dark, 0.0f, 0.0f, 2.0f, 2.0f);
+	else vita2d_draw_texture_scale(paper_pic, 0.0f, 0.0f, 2.0f, 2.0f);
 }
 
 void Canvas::fade(bool f) 
@@ -165,16 +206,7 @@ void Canvas::drawImage(Canvas *canvas, int x, int y)
 
 void Canvas::drawLine(int x1, int y1, int x2, int y2, int color)
 {
-	//sceGuTexFunc(0,0);
-	sceGuColor(color);
-	struct Vertex* vertices = (Vertex*)sceGuGetMemory(2 * sizeof(struct Vertex));
-	vertices[0].x = x1;
-	vertices[0].y = y1;
-	vertices[0].z = 0;
-	vertices[1].x = x2;
-	vertices[1].y = y2;
-	vertices[1].z = 0;
-	sceGuDrawArray(GU_LINES,GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertices);
+	vita2d_draw_line(x1, y1, x2, y2, color);
 }
 
 void Canvas::drawPath(const Path& path, int color, bool thick)
@@ -213,28 +245,7 @@ void Canvas::drawRect(int x, int y, int w, int h, int c, bool fill)
 {
 	if(fill)
 	{
-		sceGuTexFunc(0,0);
-		sceGuColor(c);
-		struct Vertex* vertices = (Vertex*)sceGuGetMemory(6 * sizeof(struct Vertex));
-		vertices[0].x = x;
-		vertices[0].y = y;
-		vertices[0].z = 0;
-		vertices[1].x = x+w;
-		vertices[1].y = y;
-		vertices[1].z = 0;
-		vertices[2].x = x+w;
-		vertices[2].y = y+h;
-		vertices[2].z = 0;		
-		vertices[3].x = x;
-		vertices[3].y = y;
-		vertices[3].z = 0;
-		vertices[4].x = x+w;
-		vertices[4].y = y+h;
-		vertices[4].z = 0;
-		vertices[5].x = x;
-		vertices[5].y = y+h;
-		vertices[5].z = 0;
-		sceGuDrawArray(GU_TRIANGLES,GU_VERTEX_32BITF|GU_TRANSFORM_2D,6,0,vertices);	
+		vita2d_draw_rectangle(x, y, w, h, c);
 	}
 	else
 	{
@@ -292,88 +303,21 @@ void Canvas::drawWorldPath(const Path& path, int color, bool thick)
 
 void Canvas::drawEdit(int x, int y)
 {
-	sceGuTexMode(GU_COLOR_5650,0,0,0);
-	sceGuTexImage(0,128,256,128,EditPic);
-	//sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
-	sceGuTexFunc(GU_TFX_ADD,GU_TCC_RGB);
-	sceGuTexFilter(GU_LINEAR,GU_LINEAR);
-	sceGuTexScale(1.0f,1.0f);
-	sceGuTexOffset(0.0f,0.0f);
-	sceGuAmbientColor(0xffffffff);
-		
-	sceGuColor(0xffffffff);
-	struct VertexUV* vertices = (struct VertexUV*)sceGuGetMemory(2 * sizeof(struct VertexUV));
-	vertices[0].u = 0; vertices[0].v = 0;
-	vertices[0].x = x; vertices[0].y = y; vertices[0].z = 0;
-	vertices[1].u = 128; vertices[1].v = 256;
-	vertices[1].x = x+100-1; vertices[1].y = y+200-1; vertices[1].z = 0;
-	sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_COLOR_5650|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertices);
-	//sceGuTexFilter(0,0);
-	sceGuTexFunc(0,0);
+	vita2d_draw_texture(edit_pic, x, y);
 }
 
 void Canvas::drawPause(int x, int y)
 {
-	sceGuTexMode(GU_COLOR_5650,0,0,0);
-	sceGuTexImage(0,32,32,32,PausePic);
-	//sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
-	sceGuTexFunc(GU_TFX_ADD,GU_TCC_RGB);
-	sceGuTexFilter(GU_LINEAR,GU_LINEAR);
-	sceGuTexScale(1.0f,1.0f);
-	sceGuTexOffset(0.0f,0.0f);
-	sceGuAmbientColor(0xffffffff);
-		
-	sceGuColor(0xffffffff);
-	struct VertexUV* vertices = (struct VertexUV*)sceGuGetMemory(2 * sizeof(struct VertexUV));
-	vertices[0].u = 0; vertices[0].v = 0;
-	vertices[0].x = x; vertices[0].y = y; vertices[0].z = 0;
-	vertices[1].u = 32; vertices[1].v = 32;
-	vertices[1].x = x+32-1; vertices[1].y = y+32-1; vertices[1].z = 0;
-	sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_COLOR_5650|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertices);
-	//sceGuTexFilter(0,0);
-	sceGuTexFunc(0,0);
+	vita2d_draw_texture_scale(pause_pic, x, y, 2.0f, 2.0f);
 }
 
 void Canvas::drawNext(int x, int y)
 {
-	sceGuTexMode(GU_COLOR_5650,0,0,0);
-	sceGuTexImage(0,512,256,512,NextPic);
-	//sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
-	sceGuTexFunc(GU_TFX_ADD,GU_TCC_RGB);
-	sceGuTexFilter(0,0);
-	sceGuTexScale(1.0f,1.0f);
-	sceGuTexOffset(0.0f,0.0f);
-	sceGuAmbientColor(0xffffffff);
-		
-	sceGuColor(0xffffffff);
-	struct VertexUV* vertices = (struct VertexUV*)sceGuGetMemory(2 * sizeof(struct VertexUV));
-	vertices[0].u = 0; vertices[0].v = 0;
-	vertices[0].x = x; vertices[0].y = y; vertices[0].z = 0;
-	vertices[1].u = 320; vertices[1].v = 192;
-	vertices[1].x = x+320-1; vertices[1].y = y+192-1; vertices[1].z = 0;
-	sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_COLOR_5650|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertices);
-	//sceGuTexFilter(0,0);
-	sceGuTexFunc(0,0);
+	vita2d_draw_texture_scale(next_pic, x, y, 2.0f, 2.0f);
 }
 
 void Canvas::drawImage(void *img, int x, int y, int w, int h)
 {
-	sceGuTexMode(GU_COLOR_5650,0,0,0);
-	sceGuTexImage(0,512,256,512,img);
-	//sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGBA);
-	sceGuTexFunc(GU_TFX_ADD,GU_TCC_RGB);
-	sceGuTexFilter(GU_LINEAR,GU_LINEAR);
-	sceGuTexScale(1.0f,1.0f);
-	sceGuTexOffset(0.0f,0.0f);
-	sceGuAmbientColor(0xffffffff);
-		
-	sceGuColor(0xffffffff);
-	struct VertexUV* vertices = (struct VertexUV*)sceGuGetMemory(2 * sizeof(struct VertexUV));
-	vertices[0].u = 0; vertices[0].v = 0;
-	vertices[0].x = x; vertices[0].y = y; vertices[0].z = 0;
-	vertices[1].u = 512; vertices[1].v = 256;
-	vertices[1].x = x+w-1; vertices[1].y = y+h-1; vertices[1].z = 0;
-	sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_COLOR_5650|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertices);
-	//sceGuTexFilter(0,0);
-	sceGuTexFunc(0,0);
+	memcpy(img_pic_data, img, 960 * 544 * 2);
+	vita2d_draw_texture_scale(img_pic, x, y, w * 2.0f / 960, h * 2.0f / 544);
 }

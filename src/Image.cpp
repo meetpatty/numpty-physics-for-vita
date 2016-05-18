@@ -22,7 +22,7 @@
 
 Image::Image(const char* file, bool alpha)
 {
-	DEBUG(__FILE__,__FUNCTION__,__LINE__);
+	//DEBUG(__FILE__,__FUNCTION__,__LINE__);
 
 	resetClip();
 }

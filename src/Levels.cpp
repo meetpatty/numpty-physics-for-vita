@@ -18,7 +18,6 @@
 * http://rock88dev.blogspot.com
 */
 
-#include <dirent.h>
 #include "Levels.h"
 
 using namespace std;
@@ -54,6 +53,7 @@ Levels::Levels(int numFiles, const char** names)
 
 bool Levels::addPath(const char* path)
 {
+
 	int len = strlen(path);
 	if (strcasecmp( path+len-4, ".nph" )==0)
 	{
@@ -61,52 +61,56 @@ bool Levels::addPath(const char* path)
 	}
 	else
 	{
-		DIR *dir = opendir(path);
+		int dir = sceIoDopen(path);
 		if (dir)
 		{
-			struct dirent* entry;
-			while((entry = readdir(dir)) != NULL)
+			SceIoDirent entry;
+			int ret = 1;
+			while(ret > 0)
 			{
+				ret = sceIoDread(dir, &entry);
 				string full(path);
 				full += "/";
-				full += entry->d_name;
-				int n = strlen(entry->d_name);
-				if (strcasecmp( entry->d_name+n-4, ".zip")==0)
+				full += entry.d_name;
+				int n = strlen(entry.d_name);
+				if (!SCE_S_ISDIR(entry.d_stat.st_mode))
 				{
-					scanCollection(full, rankFromPath(full));
-				}
-				else
-				if (strcasecmp( entry->d_name+n-4, ".nph")==0)
-				{
-					addLevel( full, rankFromPath(full) );
+					if (strcasecmp(entry.d_name + n - 4, ".zip") == 0)
+					{
+						scanCollection(full, rankFromPath(full));
+					}
+					else if (strcasecmp(entry.d_name + n - 4, ".nph") == 0)
+					{
+						addLevel(full, rankFromPath(full));
+					}
 				}
 			}
-			closedir(dir);
+			sceIoDclose(dir);
 		}
 		else
 		{
 			printf("bogus level path %s\n",path);
 		}
 	}
+
 	return true;
 }
 
 bool Levels::addLevel(const string& file, int rank)
 {
-	DEBUG3(__FILE__,__FUNCTION__,__LINE__,file.c_str());
-	//printf("found level %s\n",file.c_str());
+	//DEBUG3(__FILE__,__FUNCTION__,__LINE__,file.c_str());
 	LevelDesc *e = new LevelDesc(file, rank);
 	for (int i=0; i<m_levels.size(); i++)
 	{
 		if (m_levels[i]->file == file)
 		{
-			DEBUG3(__FILE__,__FUNCTION__,__LINE__,"false");
+			//DEBUG3(__FILE__,__FUNCTION__,__LINE__,"false");
 			return false;
 		}
 		else
 		if (m_levels[i]->rank > rank)
 		{
-			DEBUG3(__FILE__,__FUNCTION__,__LINE__,"ok");
+			//DEBUG3(__FILE__,__FUNCTION__,__LINE__,"ok");
 			m_levels.insert(i,e);
 			return true;
 		}

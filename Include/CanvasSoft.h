@@ -68,7 +68,7 @@ protected:
 	int     m_bgColour;
 	CanvasSoft* m_bgImage; 
 	Rect    m_clip;
-
+	short* m_paper_img;
 };
 
 #endif

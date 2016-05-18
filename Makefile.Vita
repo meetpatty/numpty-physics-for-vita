@@ -1,0 +1,40 @@
+VITASDK=C:\vitasdk\arm-vita-eabi
+TARGET = numptyphysics
+OBJS   = src/Canvas.o \
+		 src/CanvasSoft.o \
+		 src/EditOverlay.o \
+		 src/Game.o \
+		 src/Image.o \
+		 src/Levels.o \
+		 src/main.o \
+		 src/NextLevelOverlay.o \
+		 src/Overlay.o \
+		 src/Path.o \
+		 src/PauseOverlay.o \
+		 src/Scene.o \
+		 src/SDL_Lite.o \
+		 src/Segment.o \
+		 src/Stroke.o \
+		 src/Window.o \
+
+INCLUDES   = include
+LIBS = -lvita2d -lSceKernel_stub -lSceDisplay_stub -lSceGxm_stub \
+	-lSceSysmodule_stub -lSceCtrl_stub \
+	-lSceCommonDialog_stub -lm -lc -lbox2d -lSceNet_stub -lSceNetCtl_stub 
+
+PREFIX  = arm-vita-eabi
+CC      = $(PREFIX)-gcc
+CXX    := $(PREFIX)-g++
+CXXFLAGS += -std=c++11 -I$(INCLUDES) -L$(VITASDK)\lib
+
+all: $(TARGET).velf
+
+%.velf: %.elf
+	$(PREFIX)-strip -g $<
+	vita-elf-create $< $@
+
+$(TARGET).elf: $(OBJS)
+	$(CXX) -Wl,-q -o $@ $^ $(LIBS)
+
+clean:
+	@rm -rf $(TARGET).velf $(TARGET).elf $(OBJS)

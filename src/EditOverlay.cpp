@@ -22,8 +22,6 @@
 
 EditOverlay::EditOverlay(GameParams& game, int x, int y, int w, int h):Overlay(game,x,y),m_saving(0),m_sending(0)
 {
-	DEBUG(__FILE__,__FUNCTION__,__LINE__);
-	DEBUG2(m_x,m_y,-18,0);
 	m_x = 0;
 	m_y = 0;
 	m_w = w;
@@ -70,7 +68,7 @@ void EditOverlay::draw(Canvas* screen)
 bool EditOverlay::onClick(int x, int y)
 {
 	int i = index(x,y);
-	//DEBUG2(x,y,66,i);
+	////DEBUG2(x,y,66,i);
 	switch (i)
 	{
 		case -1: return false;

@@ -70,7 +70,7 @@ bool Overlay::handleEvent(SceCtrlData &pad, int *x, int *y)
 	float c_x = n_x;
 	float c_y = n_y;
 	//DEBUG(__FILE__,__FUNCTION__,__LINE__);
-	if((keys[CROSS]==0)&&(pad.Buttons & PSP_CTRL_CROSS))
+	if((keys[CROSS]==0)&&(pad.buttons & SCE_CTRL_CROSS))
 	{
 		//if((n_x >= m_x)&&(n_x <= m_x + m_canvas->width())&&(n_y >= m_y)&&(n_y <= m_y + m_canvas->height()))
 		if((n_x >= m_x)&&(n_x <= m_x + m_w)&&(n_y >= m_y)&&(n_y <= m_y + m_h))
@@ -85,7 +85,7 @@ bool Overlay::handleEvent(SceCtrlData &pad, int *x, int *y)
 		}
 	}
 	
-	if((!(pad.Buttons & PSP_CTRL_CROSS))&&(keys[CROSS]==2))
+	if((!(pad.buttons & SCE_CTRL_CROSS))&&(keys[CROSS]==2))
 	{
 		keys[CROSS]=0;
 		if (m_dragging)
@@ -102,68 +102,68 @@ bool Overlay::handleEvent(SceCtrlData &pad, int *x, int *y)
 		m_buttonDown = false;	
 	}
 	
-	if(pad.Buttons & PSP_CTRL_UP)
+	if(pad.buttons & SCE_CTRL_UP)
 	{
 		n_y--;
 		if (n_y < 0) n_y = 0;
 		k=1;
 	}
-	if(pad.Buttons & PSP_CTRL_DOWN)
+	if(pad.buttons & SCE_CTRL_DOWN)
 	{
 		n_y++;
 		if (n_y > 271) n_y = 271;
 		k=1;
 	}
-	if(pad.Buttons & PSP_CTRL_LEFT)
+	if(pad.buttons & SCE_CTRL_LEFT)
 	{
 		n_x--;
 		if (n_x < 0) n_x = 0;
 		k=1;
 	}
-	if(pad.Buttons & PSP_CTRL_RIGHT)
+	if(pad.buttons & SCE_CTRL_RIGHT)
 	{
 		n_x++;
-		if (n_x > 480) n_x = 480;
+		if (n_x > 960) n_x = 960;
 		k=1;
 	}
 
-	if (pad.Lx<STICK_MIN)
+	if (pad.lx<STICK_MIN)
 	{
 		float f = CUR_MINf;
-		if (pad.Lx<STICK_MID) f=CUR_MIDf;
-		if (pad.Lx<STICK_MAX) f=CUR_MAXf;
+		if (pad.lx<STICK_MID) f=CUR_MIDf;
+		if (pad.lx<STICK_MAX) f=CUR_MAXf;
 		c_x-=f;
 		if (c_x < 0) c_x = 0;
 		n_x=round(c_x);
 		k=1;
 	}
-	if (pad.Lx>(256-STICK_MIN))
+	if (pad.lx>(256-STICK_MIN))
 	{
 		float f = CUR_MINf;
-		if (pad.Lx>(256-STICK_MID)) f=CUR_MIDf;
-		if (pad.Lx>(256-STICK_MAX)) f=CUR_MAXf;
+		if (pad.lx>(256-STICK_MID)) f=CUR_MIDf;
+		if (pad.lx>(256-STICK_MAX)) f=CUR_MAXf;
 		c_x+=f;
-		if (c_x > 480) c_x = 480;
+		if (c_x > 960) c_x = 960;
 		n_x=round(c_x);
 		k=1;
 	}
-	if (pad.Ly<STICK_MIN)
+	if (pad.ly<STICK_MIN)
 	{
 		float f = CUR_MINf;
-		if (pad.Ly<STICK_MID) f=CUR_MIDf;
-		if (pad.Ly<STICK_MAX) f=CUR_MAXf;
+		if (pad.ly<STICK_MID) f=CUR_MIDf;
+		if (pad.ly<STICK_MAX) f=CUR_MAXf;
 		c_y-=f;
 		if (c_y < 0) c_y = 0;
 		n_y=round(c_y);
 		k=1;
 	}
-	if (pad.Ly>(256-STICK_MIN))
+	if (pad.ly>(256-STICK_MIN))
 	{
 		float f = CUR_MINf;
-		if (pad.Ly>(256-STICK_MID)) f=CUR_MIDf;
-		if (pad.Ly>(256-STICK_MAX)) f=CUR_MAXf;
+		if (pad.ly>(256-STICK_MID)) f=CUR_MIDf;
+		if (pad.ly>(256-STICK_MAX)) f=CUR_MAXf;
 		c_y+=f;
-		if (c_y > 480) c_y = 480;
+		if (c_y > 960) c_y = 960;
 		n_y=round(c_y);
 		k=1;
 	}
@@ -191,6 +191,6 @@ bool Overlay::handleEvent(SceCtrlData &pad, int *x, int *y)
 
 bool Overlay::onClick(int x, int y)
 {
-	DEBUG2(x,y,6,2);
+	//DEBUG2(x,y,6,2);
 	return false;
 }

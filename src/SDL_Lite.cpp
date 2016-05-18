@@ -19,8 +19,9 @@
 */
 
 #include <stdio.h>
+#include <sys/time.h>
 #include "SDL_Lite.h"
-#include <pspctrl.h>
+#include <PSP2/ctrl.h>
 
 int SDL_PollEvent(SDL_Event *event)
 {
@@ -54,9 +55,9 @@ Uint32 SDL_GetTicks()
 #endif
 }
 
-#define SCREEN_PITCH 	(512*2)
-#define SCREEN_W		(512)
-#define SCREEN_H		(272)
+#define SCREEN_PITCH 	(960*2)
+#define SCREEN_W		(960)
+#define SCREEN_H		(544)
 #define SCREEN_BITS		(16)
 #define SCREEN_BYTES	(2)
 

@@ -207,7 +207,7 @@ void Scene::draw(CanvasSoft* canvas, const Rect& area)
     clipArea.tl.y--;
     clipArea.br.x++;
     clipArea.br.y++;
-	DEBUG("Scene::draw"," ",m_strokes.size());
+	//DEBUG("Scene::draw"," ",m_strokes.size());
     for (int i=0; i<m_strokes.size(); i++)
 	{
 		//if (area.intersects(m_strokes[i]->bbox()))
@@ -261,18 +261,18 @@ void Scene::clear()
 
 bool Scene::load(const string& file)
 {
-	DEBUG(__FILE__,__FUNCTION__,__LINE__);
+	//DEBUG(__FILE__,__FUNCTION__,__LINE__);
 	clear();
-	DEBUG(__FILE__,__FUNCTION__,__LINE__);
+	//DEBUG(__FILE__,__FUNCTION__,__LINE__);
 	if (g_bgImage==NULL) g_bgImage = NULL;//!new Image("paper.bmp");
-	DEBUG(__FILE__,__FUNCTION__,__LINE__);
+	//DEBUG(__FILE__,__FUNCTION__,__LINE__);
 	m_bgImage = g_bgImage;
-	DEBUG(__FILE__,__FUNCTION__,__LINE__);
+	//DEBUG(__FILE__,__FUNCTION__,__LINE__);
 #if 0
 	m_title = "";
 	m_bg = "";
 	m_author = "test";
-	DEBUG(__FILE__,__FUNCTION__,__LINE__);
+	//DEBUG(__FILE__,__FUNCTION__,__LINE__);
 	m_strokes.append( new Stroke("Sf2: 5,250 500,200") ); 
 	m_strokes.append( new Stroke("Sgs: 296,191 305,170 304,179 307,189 323,190 319,192 315,199 313,199 317,209 312,207 311,208 312,207 314,209 316,215 306,202 304,202 299,207 298,210 296,210 294,213 293,212 291,205 293,199 287,197 282,191 291,188 298,188") );
 	m_strokes.append( new Stroke("Sf4: 400,136") );
@@ -308,9 +308,10 @@ bool Scene::load(const string& file)
       }
     }
     i.close();
-	DEBUG(__FILE__,__FUNCTION__,__LINE__);
+	//DEBUG(__FILE__,__FUNCTION__,__LINE__);
 	protect();
-	DEBUG(__FILE__,__FUNCTION__,__LINE__);
+	//DEBUG(__FILE__,__FUNCTION__,__LINE__);
+
 	return true;
 }
 

@@ -21,12 +21,7 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-#include <pspkernel.h>
-#include <pspdisplay.h>
-#include <pspdebug.h>
-#include <pspgu.h>
-#include <pspgum.h>
-#include <pspctrl.h>
+#include <psp2/ctrl.h>
 
 const int brush_colours[] = {
 	0xFF0000FF,//0xb80000, //red
@@ -45,24 +40,24 @@ const int brush_colours[] = {
 
 #define NUM_COLOURS (sizeof(brush_colours)/sizeof(brush_colours[0]))
 
-#define CUR_MINf 0.5f
-#define CUR_MIDf 1.0f
-#define CUR_MAXf 1.7f
+#define CUR_MINf 1.0f
+#define CUR_MIDf 2.0f
+#define CUR_MAXf 3.4f
 
 #define STICK_MIN 94
 #define STICK_MID 60
 #define STICK_MAX 20
 
-#define FAST_MOVE 3
+#define FAST_MOVE 6
 
 #define COLOUR_RED     brush_colours[0]
 #define COLOUR_YELLOW  brush_colours[1] 
 #define COLOUR_BLUE    brush_colours[2] 
-
+/*
 #if 1
-#define DEBUG(fl,s,n)
-#define DEBUG2(x1,x2,x3,x4)
-#define DEBUG3(c1,c2,x1,c3)
+#define //DEBUG(fl,s,n)
+#define //DEBUG2(x1,x2,x3,x4)
+#define //DEBUG3(c1,c2,x1,c3)
 #else
 #define DEBUG(fl,s,n) \
 	{ \
@@ -91,7 +86,7 @@ const int brush_colours[] = {
 	fclose(f);\
 	}
 #endif
-
+*/
 #include <Box2D/Box2D.h>
 #define ARRAY_SIZE(aRR) (sizeof(aRR)/sizeof((aRR)[0]))
 #define ASSERT(a)

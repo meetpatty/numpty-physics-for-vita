@@ -26,21 +26,20 @@ const Rect FULLSCREEN_RECT( 0, 0, CANVAS_WIDTH-1, CANVAS_HEIGHT-1 );
 
 Image *Scene::g_bgImage = NULL;
 
-Game::Game(int t):m_pauseOverlay(*this,430,10,32,32),m_editOverlay(*this,0,0,100,200),completedOverlay(*this,80,20,320,192)
+Game::Game(int t):m_pauseOverlay(*this, 2 * 430, 2 * 10, 2 * 32, 2 * 32),m_editOverlay(*this,0,0, 100, 200),completedOverlay(*this,2*80, 2 * 20, 2 * 320, 2 * 192)
 {
-	DEBUG(__FILE__,__FUNCTION__,__LINE__);
 	iterateCounter = 0;
 	SDL_StartTicks();
 	lastTick = SDL_GetTicks();
 	isComplete = false;
 	scc = 0;
 	
-	m_window = new Window(512,272);
+	m_window = new Window(960,544);
+	m_window->LoadAssets();
 	
 	m_createStroke = NULL;
 	m_moveStroke = NULL;
-	
-	m_levels.addPath("data");
+	m_levels.addPath("cache0:VitaDefilerClient/Documents/numptydata");
 	gotoLevel(0);
 
 	x=y=60;
@@ -53,10 +52,10 @@ Game::Game(int t):m_pauseOverlay(*this,430,10,32,32),m_editOverlay(*this,0,0,100
 void Game::gotoLevel(int l)
 {
 	m_window->fade(false);
-	DEBUG(__FILE__,__FUNCTION__,__LINE__);
+	
 	if (l >= 0 && l < m_levels.numLevels())
 	{
-		DEBUG(__FILE__,m_levels.levelFile(l).c_str(),__LINE__);
+		
 		m_scene.load( m_levels.levelFile(l).c_str() );
 		m_scene.activateAll();
 		m_level = l;
@@ -168,15 +167,15 @@ Vec2 Game::mousePoint(int x, int y)
 
 bool Game::handleGameEvent(SceCtrlData &pad)
 {
-	if (pad.Buttons)
+	if (pad.buttons)
 	{
-		if(pad.Buttons & PSP_CTRL_LTRIGGER)
+		if(pad.buttons & SCE_CTRL_LTRIGGER)
 		{
-			if(pad.Buttons & PSP_CTRL_LEFT)
+			if((pad.buttons & SCE_CTRL_LEFT))
 			{
 				gotoLevel(m_level-1);
 			}
-			if(pad.Buttons & PSP_CTRL_RIGHT)
+			if((pad.buttons & SCE_CTRL_RIGHT))
 			{
 				gotoLevel(m_level+1);
 			}
@@ -188,51 +187,51 @@ bool Game::handleGameEvent(SceCtrlData &pad)
 		}
 		if(keys[SQUARE]==0)
 		{
-			if(pad.Buttons & PSP_CTRL_SQUARE) gotoLevel(m_level);
+			if(pad.buttons & SCE_CTRL_SQUARE) gotoLevel(m_level);
 			keys[SQUARE]=1;
 		}
 		if(keys[TRIANGLE]==0)
 		{
-			if(pad.Buttons & PSP_CTRL_TRIANGLE) pause(!m_pause);
+			if(pad.buttons & SCE_CTRL_TRIANGLE) pause(!m_pause);
 			keys[TRIANGLE]=1;
 		}
 		if(keys[START]==0)
 		{
-			if(pad.Buttons & PSP_CTRL_START) pause(!m_pause);
+			if(pad.buttons & SCE_CTRL_START) pause(!m_pause);
 			keys[START]=1;
 		}
 		if(keys[SELECT]==0)
 		{
-			if(pad.Buttons & PSP_CTRL_SELECT) edit(!m_edit);
+			if(pad.buttons & SCE_CTRL_SELECT) edit(!m_edit);
 			keys[SELECT]=1;
 		}
 	}
-	if(!(pad.Buttons & PSP_CTRL_LTRIGGER)) keys[LTRIGGER] = 0;
-	if(!(pad.Buttons & PSP_CTRL_RTRIGGER))
+	if(!(pad.buttons & SCE_CTRL_LTRIGGER)) keys[LTRIGGER] = 0;
+	if(!(pad.buttons & SCE_CTRL_RTRIGGER))
 	{
 		keys[RTRIGGER] = 0;
 		fast_cursor=0;
 	}
-	if(!(pad.Buttons & PSP_CTRL_SQUARE)) keys[SQUARE] = 0;
-	if(!(pad.Buttons & PSP_CTRL_TRIANGLE)) keys[TRIANGLE] = 0;
-	if(!(pad.Buttons & PSP_CTRL_START)) keys[START] = 0;
-	if(!(pad.Buttons & PSP_CTRL_SELECT)) keys[SELECT] = 0;
+	if(!(pad.buttons & SCE_CTRL_SQUARE)) keys[SQUARE] = 0;
+	if(!(pad.buttons & SCE_CTRL_TRIANGLE)) keys[TRIANGLE] = 0;
+	if(!(pad.buttons & SCE_CTRL_START)) keys[START] = 0;
+	if(!(pad.buttons & SCE_CTRL_SELECT)) keys[SELECT] = 0;
 	return false;
 }
 
 bool Game::handleModEvent(SceCtrlData &pad)
 {
-
+	return false;
 }
 
 bool Game::handlePlayEvent(SceCtrlData &pad)
 {
 	int k = 0;
-	if (pad.Buttons)
+	if (pad.buttons)
 	{
 		if(keys[CROSS]==0)
 		{
-			if(pad.Buttons & PSP_CTRL_CROSS)
+			if(pad.buttons & SCE_CTRL_CROSS)
 			{
 				//DEBUG(__FILE__,"DOWN",__LINE__);
 				keys[CROSS]=1;
@@ -264,37 +263,37 @@ bool Game::handlePlayEvent(SceCtrlData &pad)
 			}
 		}
 		
-		if(pad.Buttons & PSP_CTRL_UP)
+		if(pad.buttons & SCE_CTRL_UP)
 		{
 			if(fast_cursor) y-=FAST_MOVE;
 				else y--;
 			if (y < 0) y = 0;
 			k=1;
 		}
-		if(pad.Buttons & PSP_CTRL_DOWN)
+		if(pad.buttons & SCE_CTRL_DOWN)
 		{
 			if(fast_cursor) y+=FAST_MOVE;
 				else y++;
-			if (y > 271) y = 271;
+			if (y > 543) y = 543;
 			k=1;
 		}
-		if(pad.Buttons & PSP_CTRL_LEFT)
+		if(pad.buttons & SCE_CTRL_LEFT)
 		{
 			if(fast_cursor) x-=FAST_MOVE;
 				else x--;
 			if (x < 0) x = 0;
 			k=1;
 		}
-		if(pad.Buttons & PSP_CTRL_RIGHT)
+		if(pad.buttons & SCE_CTRL_RIGHT)
 		{
 			if(fast_cursor) x+=FAST_MOVE;
 				else x++;
-			if (x > 480) x = 480;
+			if (x > 960) x = 960;
 			k=1;
 		}
 		if(keys[CIRCLE]==0)
 		{
-			if(pad.Buttons & PSP_CTRL_CIRCLE)
+			if(pad.buttons & SCE_CTRL_CIRCLE)
 			{
 				keys[CIRCLE]=1;
 				if (m_createStroke)
@@ -310,7 +309,7 @@ bool Game::handlePlayEvent(SceCtrlData &pad)
 			}
 		}
 	}
-	if((!(pad.Buttons & PSP_CTRL_CROSS))&&(keys[CROSS]==1))
+	if((!(pad.buttons & SCE_CTRL_CROSS))&&(keys[CROSS]==1))
 	{	
 		//DEBUG(__FILE__,"UP",__LINE__);
 		if(m_createStroke)
@@ -327,7 +326,7 @@ bool Game::handlePlayEvent(SceCtrlData &pad)
 		}
 		keys[CROSS] = 0;
 	}
-	if(!(pad.Buttons & PSP_CTRL_CIRCLE)) keys[CIRCLE] = 0;
+	if(!(pad.buttons & SCE_CTRL_CIRCLE)) keys[CIRCLE] = 0;
 	
 	if(k==1)
 	{
@@ -339,47 +338,47 @@ bool Game::handlePlayEvent(SceCtrlData &pad)
 		c_y = y;
 	}
 	
-	if (pad.Lx<STICK_MIN)
+	if (pad.lx<STICK_MIN)
 	{
 		float f = CUR_MINf;
-		if (pad.Lx<STICK_MID) f=CUR_MIDf;
-		if (pad.Lx<STICK_MAX) f=CUR_MAXf;
+		if (pad.lx<STICK_MID) f=CUR_MIDf;
+		if (pad.lx<STICK_MAX) f=CUR_MAXf;
 		if(fast_cursor) f*=FAST_MOVE;
 		c_x-=f;
 		if (c_x < 0) c_x = 0;
 		x=round(c_x);
 		k=1;
 	}
-	if (pad.Lx>(256-STICK_MIN))
+	if (pad.lx>(256-STICK_MIN))
 	{
 		float f = CUR_MINf;
-		if (pad.Lx>(256-STICK_MID)) f=CUR_MIDf;
-		if (pad.Lx>(256-STICK_MAX)) f=CUR_MAXf;
+		if (pad.lx>(256-STICK_MID)) f=CUR_MIDf;
+		if (pad.lx>(256-STICK_MAX)) f=CUR_MAXf;
 		if(fast_cursor) f*=FAST_MOVE;
 		c_x+=f;
-		if (c_x > 480) c_x = 480;
+		if (c_x > 960) c_x = 960;
 		x=round(c_x);
 		k=1;
 	}
-	if (pad.Ly<STICK_MIN)
+	if (pad.ly<STICK_MIN)
 	{
 		float f = CUR_MINf;
-		if (pad.Ly<STICK_MID) f=CUR_MIDf;
-		if (pad.Ly<STICK_MAX) f=CUR_MAXf;
+		if (pad.ly<STICK_MID) f=CUR_MIDf;
+		if (pad.ly<STICK_MAX) f=CUR_MAXf;
 		if(fast_cursor) f*=FAST_MOVE;
 		c_y-=f;
 		if (c_y < 0) c_y = 0;
 		y=round(c_y);
 		k=1;
 	}
-	if (pad.Ly>(256-STICK_MIN))
+	if (pad.ly>(256-STICK_MIN))
 	{
 		float f = CUR_MINf;
-		if (pad.Ly>(256-STICK_MID)) f=CUR_MIDf;
-		if (pad.Ly>(256-STICK_MAX)) f=CUR_MAXf;
+		if (pad.ly>(256-STICK_MID)) f=CUR_MIDf;
+		if (pad.ly>(256-STICK_MAX)) f=CUR_MAXf;
 		if(fast_cursor) f*=FAST_MOVE;
 		c_y+=f;
-		if (c_y > 480) c_y = 480;
+		if (c_y > 960) c_y = 960;
 		y=round(c_y);
 		k=1;
 	}
@@ -397,7 +396,7 @@ bool Game::handlePlayEvent(SceCtrlData &pad)
 
 bool Game::handleEditEvent(SceCtrlData &pad)
 {
-
+	return false;
 }
 
 void Game::run()
@@ -408,18 +407,16 @@ void Game::run()
 			m_overlays[i]->onTick(lastTick);
 		}
 
-		sceCtrlReadBufferPositive(&pad, 1);
-		{ 
-			bool handled = false;
-			for (int i=m_overlays.size()-1; i>=0 && !handled; --i)
-			{
-				handled = m_overlays[i]->handleEvent(pad,&x,&y);
-			}
-			if (!handled)
-			{
-				handled = false || handleModEvent(pad) || handleGameEvent(pad) || handleEditEvent(pad) || handlePlayEvent(pad);
-			}
+		sceCtrlPeekBufferPositive(0, &pad, 1);
+
+		bool handled = false;
+		for (int i=m_overlays.size()-1; i>=0 && !handled; --i)
+		{
+			handled = m_overlays[i]->handleEvent(pad,&x,&y);
 		}
+		
+		handleGameEvent(pad);
+		handlePlayEvent(pad);
 
 		if (isComplete && m_edit)
 		{
@@ -484,7 +481,7 @@ void Game::run()
 
 		lastTick = SDL_GetTicks();
 
-		m_window->drawRect(x-1, y-1, 3, 3, 0, true);
-		m_window->drawRect(x, y, 1, 1, 0xFFFFFFFF, true);
+		m_window->drawRect(x-3, y-3, 7, 7, 0xFF000000, true);
+		m_window->drawRect(x-1, y-1, 3, 3, 0xFFFFFFFF, true);
 	}
 }

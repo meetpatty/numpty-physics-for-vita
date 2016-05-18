@@ -26,6 +26,7 @@
 
 #include "Array.h"
 #include "zipfile.h"
+#include <psp2/io/dirent.h>
 
 class Levels
 {
