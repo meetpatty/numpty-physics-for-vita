@@ -1,8 +1,9 @@
-README 14/02/2012
+README 18/05/2016
 
-Numpty Physics for PSP
+Vita Port of NumptyPhysics for PSP
 
-Port by rock88
+Vita port by meetpatty
+PSP port by rock88
 e-mail: rock88a@gmail.com
 
 Based on Numpty Physics v0.1, Box2D v1.4.3;
