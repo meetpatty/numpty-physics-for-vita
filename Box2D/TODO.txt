@@ -1,0 +1,119 @@
+Version 1.0.0
+- Clamp large rotations. DONE
+- Restitution. DONE
+- Prismatic joint. DONE
+- Limits and motors. DONE
+- Handle equal limits. DONE
+- Fast broadphase. DONE
+- Collide connected. DONE
+- Island sleeping. DONE
+- Custom allocators. DONE
+- Convex polygons. DONE
+- Compound shapes. DONE
+- Constraint graph. DONE
+- Contact solver. DONE
+- Joint solver. DONE
+- Improved stability. DONE
+- Improve contact matching. DONE
+- Contact solver. DONE
+- Joint solver. DONE
+- Mouse picking. DONE
+- SAP AABB query. DONE
+- Distance joint. DONE
+
+Version 1.0.1
+- Joint limit bug fix. DONE
+
+Version 1.1.0
+- Handle dangling joint pointers. DONE
+- Collision filters. DONE
+- User data. DONE
+- Improved API. DONE
+- Orphaned mouse joint. DONE
+
+Version 1.2.0
+- Rename engine.lib to box2d.lib. DONE
+- Code layout. DONE
+- Circles. DONE
+
+Version 1.2.1
+- Handle proxies hitting the world boundary. DONE
+- Freeze out of bounds bodies, notify user. DONE
+- Handle running out of pairs. DONE
+
+Version 1.3.0
+- Documentation phase 1. DONE
+- Add "no rotation" option to body def. DONE
+- b2Settings configuration for pixel coordinates. DONE
+- Slider-crank test. DONE
+- Notify client when a body is frozen. DONE
+- Fix collide-connected. DONE
+- Fix compound polygons. DONE
+- Check degenerate containment resolution. DONE (no problem found)
+- Access to contacts and joints. DONE
+
+Version 1.4.0
+- Gear joint. DONE
+- Pulley joint. DONE
+- Personalize the phpbb header. DONE
+- Document contacts and new joint types. DONE
+
+Version 1.4.1
+- Fix contact list. DONE
+- Damping. DONE
+- Poly-circle ids. DONE
+- Improve mouse joint. DONE
+
+Version 1.4.2
+- Improve joint stability.
+
+Version 1.4.3
+- Fix thin polygon collision.
+- Simplify broad-phase internally.
+- OSX patch.
+- Fix compound body freezing.
+- Collision filter callback.
+
+Version 2.0.0
+- CCD.
+- Contact callbacks.
+- Primitives for collision queries.
+- Get rid of deferred destruction.
+- JointDefs in local coordinates so that save/load works with limits.
+
+Version 2.1.0
+- Meshes (segment soup).
+- Ray casts.
+
+Version 2.2.0
+- Handle orphaned gear joint.
+- Friction joint for top down games.
+- Rolling resistance for circles.
+- Re-filter function.
+
+Version 2.3.0
+- Convex hull tool.
+- Angle joint.
+
+Version 2.4.0
+- Spline joints.
+
+Version 2.5.0
+- Convex decomposition.
+
+Version 2.6.0
+- Ropes and particles.
+
+Version 3+
+- Performance.
+- Try position correction clamping and larger Baumgarte.
+- Characters.
+- Vehicles.
+- Tree constraints.
+- Buoyancy.
+- Heightfields.
+- Static point-grids.
+- Revolute 3x3 effective mass.
+- Use velocity lambda to control NGS clamping.
+- Sensors.
+- Add/remove shapes from a body.
