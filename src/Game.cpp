@@ -224,15 +224,23 @@ bool Game::handleModEvent(SceCtrlData &pad)
 	return false;
 }
 
-bool Game::handlePlayEvent(SceCtrlData &pad)
+bool Game::handlePlayEvent(SceCtrlData &pad, SceTouchData &touch)
 {
 	int k = 0;
-	if (pad.buttons)
+	if (pad.buttons || touch.reportNum > 0)
 	{
 		if(keys[CROSS]==0)
 		{
-			if(pad.buttons & SCE_CTRL_CROSS)
+			if(pad.buttons & SCE_CTRL_CROSS || touch.reportNum > 0)
 			{
+				if (touch.reportNum > 0)
+				{
+					c_x = lerp(touch.report[0].x, 1920, 960);
+					x = c_x;
+					c_y = lerp(touch.report[0].y, 1088, 544);
+					y = c_y;
+				}
+
 				//DEBUG(__FILE__,"DOWN",__LINE__);
 				keys[CROSS]=1;
 				if(!m_createStroke)
@@ -309,7 +317,7 @@ bool Game::handlePlayEvent(SceCtrlData &pad)
 			}
 		}
 	}
-	if((!(pad.buttons & SCE_CTRL_CROSS))&&(keys[CROSS]==1))
+	if((!(pad.buttons & SCE_CTRL_CROSS))&& touch.reportNum <= 0 &&(keys[CROSS]==1))
 	{	
 		//DEBUG(__FILE__,"UP",__LINE__);
 		if(m_createStroke)
@@ -382,6 +390,18 @@ bool Game::handlePlayEvent(SceCtrlData &pad)
 		y=round(c_y);
 		k=1;
 	}
+
+	if (touch.reportNum > 0)
+	{
+		c_x = lerp(touch.report[0].x, 1920, 960);
+		c_y = lerp(touch.report[0].y, 1088, 544);
+
+		if (c_x != x && c_y != y)
+			k = 1;
+
+		x = c_x;
+		y = c_y;
+	}
 	
 	if(k==1)
 	{
@@ -408,15 +428,16 @@ void Game::run()
 		}
 
 		sceCtrlPeekBufferPositive(0, &pad, 1);
+		sceTouchPeek(0, &touch, 1);
 
 		bool handled = false;
 		for (int i=m_overlays.size()-1; i>=0 && !handled; --i)
 		{
-			handled = m_overlays[i]->handleEvent(pad,&x,&y);
+			handled = m_overlays[i]->handleEvent(pad,&x,&y, touch);
 		}
 		
 		handleGameEvent(pad);
-		handlePlayEvent(pad);
+		handlePlayEvent(pad, touch);
 
 		if (isComplete && m_edit)
 		{

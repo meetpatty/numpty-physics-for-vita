@@ -20,7 +20,7 @@ OBJS   = src/Canvas.o \
 INCLUDES   = include
 LIBS = -lvita2d -lSceKernel_stub -lSceDisplay_stub -lSceGxm_stub \
 	-lSceSysmodule_stub -lSceCtrl_stub \
-	-lSceCommonDialog_stub -lm -lc -lbox2d -lSceNet_stub -lSceNetCtl_stub 
+	-lSceCommonDialog_stub -lm -lc -lbox2d -lSceNet_stub -lSceNetCtl_stub  -lSceTouch_stub
 
 PREFIX  = arm-vita-eabi
 CC      = $(PREFIX)-gcc

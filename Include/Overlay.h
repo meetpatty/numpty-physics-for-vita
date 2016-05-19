@@ -84,7 +84,7 @@ public:
 	virtual void onHide();
 	virtual void onTick(int tick);
 	virtual void draw(Canvas* screen);
-	virtual bool handleEvent(SceCtrlData &pad, int *x, int *y);
+	virtual bool handleEvent(SceCtrlData &pad, int *x, int *y, SceTouchData &touch);
 	virtual bool onClick(int x, int y);
 
 protected:

@@ -86,7 +86,7 @@ public:
 
 	bool handleGameEvent(SceCtrlData &pad);
 	bool handleModEvent(SceCtrlData &pad);
-	bool handlePlayEvent(SceCtrlData &pad);
+	bool handlePlayEvent(SceCtrlData &pad, SceTouchData &touch);
 	bool handleEditEvent(SceCtrlData &pad);
 	
 	void run();
@@ -101,6 +101,7 @@ private:
 	NextLevelOverlay completedOverlay;
 	SDL_Event ev;
 	SceCtrlData pad;
+	SceTouchData touch;
 	int fast_cursor;
 	
 };

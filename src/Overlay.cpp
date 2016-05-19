@@ -62,7 +62,7 @@ void Overlay::draw(Canvas* screen)
 	if (m_canvas) screen->drawImage(m_canvas, m_x, m_y);
 }
 
-bool Overlay::handleEvent(SceCtrlData &pad, int *x, int *y)
+bool Overlay::handleEvent(SceCtrlData &pad, int *x, int *y, SceTouchData &touch)
 {
 	int k = 0;
 	int n_x = *x;
@@ -70,8 +70,16 @@ bool Overlay::handleEvent(SceCtrlData &pad, int *x, int *y)
 	float c_x = n_x;
 	float c_y = n_y;
 	//DEBUG(__FILE__,__FUNCTION__,__LINE__);
-	if((keys[CROSS]==0)&&(pad.buttons & SCE_CTRL_CROSS))
+	if((keys[CROSS]==0)&&((pad.buttons & SCE_CTRL_CROSS) || touch.reportNum > 0))
 	{
+		if (touch.reportNum > 0)
+		{
+			n_x = lerp(touch.report[0].x, 1920, 960);
+			c_x = n_x;
+			n_y = lerp(touch.report[0].y, 1088, 544);
+			c_y = n_y;
+		}
+
 		//if((n_x >= m_x)&&(n_x <= m_x + m_canvas->width())&&(n_y >= m_y)&&(n_y <= m_y + m_canvas->height()))
 		if((n_x >= m_x)&&(n_x <= m_x + m_w)&&(n_y >= m_y)&&(n_y <= m_y + m_h))
 		{
@@ -85,7 +93,7 @@ bool Overlay::handleEvent(SceCtrlData &pad, int *x, int *y)
 		}
 	}
 	
-	if((!(pad.buttons & SCE_CTRL_CROSS))&&(keys[CROSS]==2))
+	if((!(pad.buttons & SCE_CTRL_CROSS))&& touch.reportNum <= 0 &&(keys[CROSS]==2))
 	{
 		keys[CROSS]=0;
 		if (m_dragging)
@@ -166,6 +174,18 @@ bool Overlay::handleEvent(SceCtrlData &pad, int *x, int *y)
 		if (c_y > 960) c_y = 960;
 		n_y=round(c_y);
 		k=1;
+	}
+
+	if (touch.reportNum > 0)
+	{
+		c_x = lerp(touch.report[0].x, 1920, 960);
+		c_y = lerp(touch.report[0].y, 1088, 544);
+
+		if (c_x != n_x && c_y != n_y)
+			k = 1;
+
+		n_x = c_x;
+		n_y = c_y;
 	}
 	
 	if(k==1)

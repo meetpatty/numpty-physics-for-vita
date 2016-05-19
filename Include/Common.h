@@ -21,7 +21,10 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#define lerp(value, from_max, to_max) ((((value*10) * (to_max*10))/(from_max*10))/10)
+
 #include <psp2/ctrl.h>
+#include <psp2/touch.h>
 
 const int brush_colours[] = {
 	0xFF0000FF,//0xb80000, //red

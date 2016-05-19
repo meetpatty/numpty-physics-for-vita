@@ -46,7 +46,7 @@ class PauseOverlay : public Overlay
 public:
 	PauseOverlay(GameParams& game, int x=10, int y=10, int w=10, int h=10);
 	virtual void draw(Canvas* screen);
-	virtual bool handleEvent(SceCtrlData &pad, int *x, int *y);
+	virtual bool handleEvent(SceCtrlData &pad, int *x, int *y, SceTouchData &touch);
 };
 
 #endif

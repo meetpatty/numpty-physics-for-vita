@@ -33,7 +33,7 @@ void PauseOverlay::draw(Canvas* screen)
 	screen->drawPause(m_x,m_y);
 }
 
-bool PauseOverlay::handleEvent(SceCtrlData &pad, int *x, int *y)
+bool PauseOverlay::handleEvent(SceCtrlData &pad, int *x, int *y, SceTouchData &touch)
 {
 	return false;
 }
